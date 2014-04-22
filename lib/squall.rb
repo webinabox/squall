@@ -12,6 +12,7 @@ module Squall
   # Api
   autoload :Hypervisor,     'squall/hypervisor'
   autoload :User,           'squall/user'
+  autoload :CdnResource,    'squall/cdn_resource'
   autoload :Role,           'squall/role'
   autoload :Network,        'squall/network'
   autoload :IpAddress,      'squall/ip_address'

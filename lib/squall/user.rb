@@ -176,5 +176,11 @@ module Squall
       response = request(:get, "/users/#{id}/limits.json")
       response["limits"]
     end
+
+    def cdn_resources(id)
+      response = request(:get, "/cdn_resources.json?type=http")
+      response.collect! {|cdn_r| cdn_r["cdn_resource"] if cdn_r["cdn_resource"]["user_id"] == id }
+      response.compact
+    end     
   end
 end

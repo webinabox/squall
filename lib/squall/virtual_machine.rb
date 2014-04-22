@@ -266,9 +266,9 @@ module Squall
     # ==== Params
     #
     # * +id*+ - ID of the virtual machine
-    def stats(id)
-      response = request(:post, "/virtual_machines/#{id}/vm_stats.json")
-      response['virtual_machine']
+    def stats(id, options = {})
+      response = request(:get, "/virtual_machines/#{id}/vm_stats.json", :query => options)
+      response
     end
   end
 end

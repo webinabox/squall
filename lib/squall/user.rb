@@ -127,6 +127,17 @@ module Squall
       response = request(:get, "/users/#{id}/monthly_bills.json")
     end
 
+    # Get a list of billing statistics for the User
+    #
+    # ==== Params
+    #
+    # * +id*+ - ID of user
+    # * +options+ - Params for restricting the statistics
+    def user_statistics(id, options = {})
+      response = request(:get, "/users/#{id}/user_statistics.json", {:query => options})
+      return response["user_stat"]
+    end
+
     # Return a list of VirtualMachines for a User
     #
     # ==== Params

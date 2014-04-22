@@ -1,4 +1,3 @@
-require 'yaml'
 require 'rspec'
 require 'vcr'
 require 'squall'
@@ -7,9 +6,9 @@ VCR.config do |c|
   c.cassette_library_dir = 'spec/vcr_cassettes'
   c.stub_with :fakeweb
   if ENV['RERECORD']
-    c.default_cassette_options = {:record => :all}
+    c.default_cassette_options = {record: :all}
   else
-    c.default_cassette_options = {:record => :none}
+    c.default_cassette_options = {record: :none}
   end
   c.filter_sensitive_data("Basic <REDACTED>") { |i| [i.request.headers['authorization']].flatten.first }
   c.filter_sensitive_data("<REDACTED>") { |i| [i.response.headers['set-cookie']].flatten.first }
@@ -30,7 +29,7 @@ end
 
 def configure_for_tests
   if ENV['RERECORD']
-    Squall.config_file 	
+    Squall.config_file
   else
     Squall.config do |c|
       c.username "test"
@@ -40,13 +39,9 @@ def configure_for_tests
   end
 end
 
-def requires_attr(attr, &block)
-  expect { block.call }.to raise_error(ArgumentError, /Missing required params: #{attr}/i)
-end
-
 def mock_request(meth, path, options = {})
   config = Squall.config
-  uri    = URI.parse(Squall.config[:base_uri])
+  uri    = URI.parse(config[:base_uri])
   url    = "#{uri.scheme}://#{config[:username]}:#{config[:password]}@#{uri.host}:#{uri.port}#{path}"
-  FakeWeb.register_uri(meth, url, {:content_type => 'application/json'}.merge(options))
+  FakeWeb.register_uri(meth, url, {content_type: 'application/json'}.merge(options))
 end

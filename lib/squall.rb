@@ -1,9 +1,9 @@
+require 'yaml'
 require 'faraday'
 require 'faraday_middleware'
 
 require 'squall/support/version'
 require 'squall/support/exception'
-require 'squall/support/yaml'
 
 module Squall
   # Support
@@ -28,6 +28,7 @@ module Squall
   autoload :DataStoreZone,  'squall/data_store_zone'
   autoload :NetworkZone,    'squall/network_zone'
   autoload :HypervisorZone, 'squall/hypervisor_zone'
+  autoload :Disk,           'squall/disk'
 
   extend self
 
@@ -39,53 +40,55 @@ module Squall
 
   self.configuration ||= Squall::Config.new
 
-  # Specificy the config via block
+  # Public: Configures Squall.
   #
-  # ==== Attributes
+  # Yields Squall.configuration if a block is given.
   #
-  # * +base_uri+ - URL of your OnApp instance
-  # * +username+ - API username
-  # * +password+ - API Password
-  # * +debug+ - Toggle debug mode to log HTTParty
+  # Example
   #
-  # ==== Example
+  #     Squall.config do |c|
+  #       c.base_uri 'http://onapp.myserver.com'
+  #       c.username 'myuser'
+  #       c.password 'mypass'
+  #       c.debug    true
+  #     end
   #
-  #   Squall.config do |c|
-  #     c.base_uri 'http://onapp.myserver.com'
-  #     c.username 'myuser'
-  #     c.password 'mypass'
-  #   end
+  # Returns a Hash.
   def config
     yield self.configuration if block_given?
     self.configuration.config
   end
 
-  # Load the config from a YAML file
+  # Public: Load the config from a YAML file.
   #
-  # ==== Options
+  # file - Path to the YAML file, defaults to `~/.squall.yml`
   #
-  # * +file+ - Path to the YAML file (default is ~/.squall.yml)
+  # Raises ArgumentError if the config file does not exist.
   #
-  # ==== Example
+  # Example
   #
-  #   Squall.config_file # (loads ~/.squall.yml)
+  #     # Load default config file at `~/.squall.yml`:
+  #     Squall.config_file
   #
-  #   Squall.config_file '/path/to/squall.yml'
+  #     # Load custom config file:
+  #     Squall.config_file '/path/to/squall.yml'
   #
-  def config_file(file = nil)
-    file = File.expand_path(File.expand_path(File.join(ENV['HOME'], '.squall.yml'))) if file.nil?
+  # Returns nothing.
+  def config_file(file = File.expand_path("~/.squall.yml"))
     if File.exists?(file)
       self.configuration_file = file
     else
       raise ArgumentError, "Config file doesn't exist '#{file}'"
     end
-    settings = YAML::load_file(file)
+
     config do |c|
-      settings.each { |k, v| c.send(k, v) }
+      YAML::load_file(file).each { |k, v| c.send(k, v) }
     end
   end
 
-  # Reset the config (aka, clear it)
+  # Public: Reset the config (aka, clear it)
+  #
+  # Returns an instance of Squall::Config.
   def reset_config
     self.configuration = Squall::Config.new
   end

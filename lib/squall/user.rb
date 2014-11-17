@@ -123,8 +123,8 @@ module Squall
     # ==== Params
     #
     # * +id*+ - ID of user
-    def monthly_bills(id)
-      response = request(:get, "/users/#{id}/monthly_bills.json")
+    def monthly_bills(id, options = {})
+      response = request(:get, "/users/#{id}/monthly_bills.json", {:query => options})
     end
 
     # Get a list of billing statistics for the User

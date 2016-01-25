@@ -93,7 +93,7 @@ module Squall
     #
     # * +id*+ - ID of user
     def activate(id)
-      response = request(:post, "/users/#{id}/activate_user.json")
+      response = request(:post, "/users/#{id}/activate.json")
       response["user"]
     end
     alias_method :unsuspend, :activate
